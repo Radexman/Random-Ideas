@@ -1,0 +1,22 @@
+{
+	"name": "randomideas",
+	"version": "1.0.0",
+	"description": "Idea sharing app",
+	"main": "server.js",
+	"scripts": {
+		"start": "node server.js"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Radexman/Random-Ideas.git"
+	},
+	"author": "Radosław Siek",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Radexman/Random-Ideas/issues"
+	},
+	"homepage": "https://github.com/Radexman/Random-Ideas#readme",
+	"dependencies": {
+		"express": "^4.18.2"
+	}
+}
