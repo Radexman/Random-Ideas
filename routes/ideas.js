@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const Idea = require('../models/Idea');
 
 const ideas = [
 	{
@@ -26,8 +27,14 @@ const ideas = [
 ];
 
 // Get all ideas
-router.get('/', (request, response) => {
-	response.json({ success: true, data: ideas });
+router.get('/', async (request, response) => {
+	try {
+		const ideas = await Idea.find();
+		response.json({ success: true, data: ideas });
+	} catch (error) {
+		console.log(error);
+		response.status(500).json({ sucess: false, error: 'Something went wrong' });
+	}
 });
 
 // Get single idea
@@ -41,20 +48,49 @@ router.get('/:id', (request, response) => {
 	response.json({ success: true, data: idea });
 });
 
-// Add an idea
-router.post('/', (request, response) => {
-	const idea = {
-		id: ideas.length + 1,
+// Create idea
+router.post('/', async (request, response) => {
+	const idea = new Idea({
 		text: request.body.text,
 		tag: request.body.tag,
 		username: request.body.username,
-		data: new Date().toISOString().slice(0, 10),
-	};
+	});
 
-	console.log(idea);
+	try {
+		const savedIdea = await idea.save();
+		response.json({ success: true, data: savedIdea });
+	} catch (error) {
+		console.log(error);
+		response.status(500).json({ success: false, error: 'Something went wrong' });
+	}
+});
 
-	ideas.push(idea);
+// Update idea
+router.put('/:id', (request, response) => {
+	const idea = ideas.find((idea) => idea.id === +request.params.id);
+
+	if (!idea) {
+		return response.status(404).json({ sucess: false, error: 'Resource not found' });
+	}
+
+	idea.text = request.body.text || idea.text;
+	idea.tag = request.body.tag || idea.tag;
+
 	response.json({ sucess: true, data: idea });
+});
+
+// Delete idea
+router.delete('/:id', (request, response) => {
+	const idea = ideas.find((idea) => idea.id === +request.params.id);
+
+	if (!idea) {
+		return response.status(404).json({ sucess: false, error: 'Resource not found' });
+	}
+
+	const index = ideas.indexOf(idea);
+	ideas.splice(index, 1);
+
+	response.json({ sucess: true, data: {} });
 });
 
 module.exports = router;
